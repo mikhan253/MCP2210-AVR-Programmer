@@ -27,7 +27,6 @@ def AVR_LOAD_PROG_MEMORY(lh, adr, data):
     if lh=='l':
         return bytes((0b01000000, 0, adr, data))
 def AVR_WRITE_PROG_MEMORY(page):
-    #return bytes((0b01001100, 00aaaaaa, bbxxxxxx, 0))
     return bytes((0b01001100, page >> 2, (page & 0b11) << 6, 0))
 def AVR_READ_PROG_MEMORY(lh, adr):
     if lh=='h':
