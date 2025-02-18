@@ -1,0 +1,48 @@
+######################################################
+# Auto generated Makefile @08.12.2024 09:54:13
+######################################################
+
+
+
+PROJECT = usbmaster
+CHIP = atmega32
+ID = m32
+TARGET = $(PROJECT).elf
+TCPATH = 
+CC = avr-gcc
+CPP = avr-gcc
+OL = O0
+COMMON = -mmcu=$(CHIP)
+CFLAGS = $(COMMON) -Wall -gdwarf-2 -std=gnu99 -$(OL) -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums -DF_CPU=12000000UL -DDEBUG
+GENDFLAGS = 
+LDFLAGS = $(COMMON) -Wl,-Map=$(PROJECT).map
+HEX_FLASH_FLAGS = -R .eeprom -R .fuse -R .lock -R .singature
+HEX_EEPROM_FLAGS = -j .eeprom --set-section-flags=.eeprom="alloc,load" --change-section-lma .eeprom=0 --no-change-warnings
+INCLUDES =  -I./Drivers/Includes
+OBJECTS =  main.o
+SOBJECTS =  
+EXTOBJS = 
+
+all: clean $(TARGET) $(PROJECT).hex $(PROJECT).lss
+	@echo ""
+
+
+main.o : ./main.c
+	$(CC) $(INCLUDES) $(GENDFLAGS) $(CFLAGS) -c ./main.c
+
+
+$(TARGET): $(OBJECTS) $(SOBJECTS)
+	$(CC) $(LDFLAGS) $(OBJECTS) $(SOBJECTS) $(EXTOBJS) $(LIBDIRS) $(LIBS) -o $(TARGET)
+
+$(PROJECT).hex: $(TARGET)
+	@avr-objcopy -O ihex $(HEX_FLASH_FLAGS) $(PROJECT).elf $(PROJECT).hex
+
+$(PROJECT).lss: $(TARGET)
+	@avr-objdump -h -S $(PROJECT).elf > $(PROJECT).lss
+	@avr-size $(PROJECT).elf
+
+AVRDUDE: $(PROJECT).hex
+	@avrdude -c arduino -P COM10 -p lgt8f328p -Uflash:w:$(PROJECT).hex:i
+
+clean: 
+	@rm -rf *.o *.hex *.lss *.map *.elf
